@@ -1,0 +1,37 @@
+{
+  "author": "neartana",
+  "bin": {
+    "nextshift": "bin/install.js"
+  },
+  "description": "One /continue command for every AI coding agent: resume another agent's work (codex, claude-code, opencode, deepseek-harness, muse) from the shared .agent/ handoff checkpoint, bridged over GitHub.",
+  "files": [
+    "bin",
+    "core",
+    "adapters",
+    "scripts",
+    "assets",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "ai-agent",
+    "handoff",
+    "claude-code",
+    "codex",
+    "opencode",
+    "slash-command",
+    "plugin"
+  ],
+  "license": "MIT",
+  "name": "nextshift",
+  "version": "1.0.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neartana/nextshift.git"
+  },
+  "homepage": "https://github.com/neartana/nextshift#readme",
+  "bugs": {
+    "url": "https://github.com/neartana/nextshift/issues"
+  }
+}
