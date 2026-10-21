@@ -68,11 +68,23 @@ File ini append-only — jangan edit entri lama.
 
 ## Git & GitHub
 
-- Sering-sering commit WIP, lalu `push`. Checkpoint yang belum ter-push
-  TIDAK ADA bagi agent di mesin lain (mis. Muse yang diakses dari HP).
+- Checkpoint LOKAL adalah sumber pemulihan utama: update `.agent/` +
+  index lokal setelah langkah berarti, dan penulisan itu harus berhasil
+  tanpa git/remote/jaringan. Commit WIP + `push` adalah sinkronisasi
+  tambahan bila remote tersedia dan diizinkan — checkpoint yang belum
+  ter-push memang tidak terlihat agent di mesin lain (mis. Muse dari
+  HP), tapi JANGAN pernah mengklaim tersinkron sebelum push benar-benar
+  sukses; catat status `synced` apa adanya.
+- Saat commit checkpoint, stage hanya `.agent/` + file terkait
+  checkpoint ini. JANGAN `git add -A` (bisa menyapu perubahan pengguna
+  yang tidak terkait), dan jangan commit transcript mentah sesi.
 - Pesan commit checkpoint: `wip: handoff checkpoint <ringkasan singkat>`
-- Mode `latest` bersifat LOKAL: resolusinya dari index
-  `~/.nextshift/index.jsonl`, lalu pemindaian folder project lokal.
+- Mode `latest` bersifat LOKAL: buktinya adalah riwayat sesi asli
+  harness, index `~/.nextshift/index.jsonl` (petunjuk, bisa tertinggal),
+  dan checkpoint `.agent/` dari pemindaian folder lokal. "Terakhir"
+  ditentukan oleh aktivitas substantif pengguna di bukti itu — bukan
+  mtime file atau waktu sinkronisasi. Helper:
+  `node ~/.nextshift/resolve-latest.mjs <agent> latest`.
   Agent yang berjalan di mesin ini TIDAK BOLEH fallback memindai GitHub
   untuk mode latest (GitHub hanya untuk agent remote / lintas-mesin).
 - Setiap checkpoint juga dicatat ke index global `~/.nextshift/index.jsonl`

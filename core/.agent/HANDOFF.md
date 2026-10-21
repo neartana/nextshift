@@ -8,6 +8,8 @@
 
 - Terakhir dikerjakan oleh: <nama agent, mis. Codex>
 - Tanggal-jam: <YYYY-MM-DD HH:MM zona waktu>
+- Referensi sesi: <path/id sesi harness sumber, bila ada>
+- Aktivitas substantif terakhir: <YYYY-MM-DD HH:MM zona waktu — aksi pengguna/pekerjaan terakhir yang nyata, bukan waktu sync/admin>
 - Branch: <nama branch>
 - Commit terakhir: <hash pendek + pesan commit>
 - Tujuan besar sesi ini: <satu kalimat>

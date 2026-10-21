@@ -85,6 +85,11 @@ if (doInit) {
   put(A("codex/skills/continue"), join(initDir, ".agents/skills/continue"), noOver);
 }
 
+// Helper bersama semua agent: resolver bukti untuk mode latest.
+// Selalu diperbarui (ini tool nextshift, bukan konfigurasi pengguna).
+console.log("\n[helper]");
+put(join(pkg, "scripts", "resolve-latest.mjs"), join(home, ".nextshift", "resolve-latest.mjs"));
+
 console.log(`\nSelesai (${installed} item). Cara memanggil:`);
 console.log("  Claude Code : /continue codex");
 console.log("  OpenCode    : /continue codex");

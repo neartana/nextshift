@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
-  <img src="https://img.shields.io/badge/version-1.1.1-blue" alt="version 1.1.1">
+  <img src="https://img.shields.io/badge/version-1.2.0-blue" alt="version 1.2.0">
   <img src="https://img.shields.io/badge/command-%2Fcontinue-7C3AED" alt="command /continue">
   <img src="https://img.shields.io/badge/agents-codex%20%C2%B7%20claude--code%20%C2%B7%20opencode%20%C2%B7%20deepseek%20%C2%B7%20muse-lightgrey" alt="supported agents">
 </p>
@@ -120,6 +120,16 @@ at `~/.nextshift/index.jsonl` — one line per checkpoint, appended
 automatically by the checkpoint scripts — and picks that agent's most
 recent entry. If the index has no match, it scans local project folders
 for `.agent/HANDOFF.md` files and backfills the index from what it finds.
+The index is only a hint, though: agents also consult the harness's own
+session history where its location is verified (today: DeepSeek Harness
+at `~/.dsh/sessions`, whose `session.v4.jsonl.zstd` files hold multiple
+concatenated Zstandard frames — all frames are read). "Latest" is decided
+by substantive user activity inside that evidence, never by file mtimes
+or sync times, and the deterministic helper
+`node ~/.nextshift/resolve-latest.mjs <agent> latest` (installed into
+`~/.nextshift/`) performs the whole resolution. Multi-word aliases work:
+`deepseek harness`, `claude code`, and `open code` resolve exactly like
+their hyphenated forms.
 **Latest mode is local by design: a local agent never falls back to
 scanning GitHub.** The GitHub scan (repos by latest push, matched on the
 `HANDOFF.md` author) exists only for remote agents that cannot see your
@@ -139,13 +149,16 @@ starts working, so a wrong guess is easy to catch.
 
 Two disciplines make the whole system work:
 
-1. **Checkpoint continuously, not at the end.** Limits run out without
-   warning, so `HANDOFF.md` is updated after every meaningful step — the
-   bundled checkpoint scripts (installed into projects as
-   `scripts/checkpoint.sh` / `scripts/checkpoint.ps1`) do a WIP commit +
-   push in one command.
+1. **Checkpoint locally first, continuously.** Limits run out without
+   warning, so `HANDOFF.md` and the local index are updated after every
+   meaningful step — the bundled checkpoint scripts (installed into
+   projects as `scripts/checkpoint.sh` / `scripts/checkpoint.ps1`)
+   always write the local checkpoint first, even with no git repo, no
+   remote, and no network, and record the sync status honestly
+   (`synced: true/false`). They stage only `.agent/` — never `git add -A`.
 2. **An unpushed checkpoint does not exist** for an agent on another
-   machine. Push early, push often.
+   machine. Push early, push often — but never claim a sync that did
+   not actually happen.
 
 ## Repository layout
 
@@ -154,6 +167,8 @@ core/       the one canonical /continue protocol + the .agent/ template
 adapters/   generated per-harness wrappers — do not edit by hand;
             run `node scripts/build-adapters.mjs` after changing core
 bin/        the zero-dependency npx installer
+scripts/    build-adapters.mjs + resolve-latest.mjs (the evidence
+            resolver for latest mode, installed to ~/.nextshift/)
 assets/     logo
 ```
 

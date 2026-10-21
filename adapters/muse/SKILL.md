@@ -14,7 +14,14 @@ hanya terlihat oleh Muse lewat GitHub. Skill ini adalah jembatan itu.
 `/continue <agent-sebelumnya> [repo] [target]`
 
 - `<agent-sebelumnya>`: codex | claude-code | opencode | deepseek-harness | muse
-  (alias: claude -> claude-code, open-code -> opencode, dsh/deepseek -> deepseek-harness)
+  (alias: claude -> claude-code, open-code -> opencode, dsh/deepseek -> deepseek-harness;
+  alias dua kata setara bentuk stripnya: `deepseek harness` = deepseek-harness,
+  `claude code` = claude-code, `open code` = opencode)
+- Kejujuran cakupan: Muse TIDAK bisa membaca index lokal, folder project,
+  ataupun riwayat sesi harness (mis. `~/.dsh/sessions`) di komputer
+  pengguna — semua itu lokal di mesinnya, dan resolusi `latest` berbasis
+  sesi adalah kemampuan agent lokal. Jalur Muse hanyalah checkpoint yang
+  sudah ter-push ke GitHub; jangan mengklaim lebih dari itu.
 - `[repo]`: nama repo di bawah akun GitHub pengguna (neartana) atau URL clone.
   Kalau tidak disebut, tanyakan SATU kali repo mana — jangan menebak.
 - **Mode `latest`** (`/continue codex latest`, atau `/continue latest`):
