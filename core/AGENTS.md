@@ -71,6 +71,11 @@ File ini append-only — jangan edit entri lama.
 - Sering-sering commit WIP, lalu `push`. Checkpoint yang belum ter-push
   TIDAK ADA bagi agent di mesin lain (mis. Muse yang diakses dari HP).
 - Pesan commit checkpoint: `wip: handoff checkpoint <ringkasan singkat>`
+- Setiap checkpoint juga dicatat ke index global `~/.nextshift/index.jsonl`
+  (script checkpoint melakukannya otomatis). Index ini yang dipakai perintah
+  `/continue <agent> latest` untuk menemukan project terakhir dari agent itu.
+  Kalau checkpoint manual (tanpa script), tambahkan sendiri satu baris JSON:
+  `{"ts":..., "project":..., "repo":..., "branch":..., "commit":..., "agent":..., "summary":...}`.
 - Jangan force-push ke branch yang dipakai bersama tanpa izin pemilik project.
 - Jangan commit rahasia: API key, token, password, file `.env` asli.
 - Identitas commit memakai `neartana <neartana@users.noreply.github.com>`.

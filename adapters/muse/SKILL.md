@@ -17,7 +17,19 @@ hanya terlihat oleh Muse lewat GitHub. Skill ini adalah jembatan itu.
   (alias: claude -> claude-code, open-code -> opencode, dsh/deepseek -> deepseek-harness)
 - `[repo]`: nama repo di bawah akun GitHub pengguna (neartana) atau URL clone.
   Kalau tidak disebut, tanyakan SATU kali repo mana — jangan menebak.
-- Tanpa repo dan tanpa konteks repo di percakapan ini: jangan lanjut.
+- **Mode `latest`** (`/continue codex latest`, atau `/continue latest`):
+  repo tidak disebut karena memang harus dicari. Index lokal
+  `~/.nextshift/index.jsonl` ada di komputer pengguna, BUKAN di VM ini,
+  jadi jalur Muse adalah GitHub: ambil daftar repo pengguna urut dari
+  push terbaru (`gh repo list neartana --json name,pushedAt`), lalu untuk
+  kandidat teratas periksa `.agent/HANDOFF.md`-nya (raw / gh api contents)
+  dan cocokkan kolom "Terakhir dikerjakan oleh" dengan agent yang diminta.
+  Repo pertama yang cocok = project latest. Umumkan project + commit-nya
+  dalam satu baris sebelum bekerja. Kalau tidak ada repo yang punya
+  `.agent/HANDOFF.md` dari agent itu, katakan apa adanya dan tanyakan
+  nama repo-nya — tetap jangan menebak.
+- Tanpa repo, tanpa mode latest, dan tanpa konteks repo di percakapan ini:
+  jangan lanjut.
 
 ## Prosedur
 

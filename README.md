@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
-  <img src="https://img.shields.io/badge/version-1.0.1-blue" alt="version 1.0.1">
+  <img src="https://img.shields.io/badge/version-1.1.0-blue" alt="version 1.1.0">
   <img src="https://img.shields.io/badge/command-%2Fcontinue-7C3AED" alt="command /continue">
   <img src="https://img.shields.io/badge/agents-codex%20%C2%B7%20claude--code%20%C2%B7%20opencode%20%C2%B7%20deepseek%20%C2%B7%20muse-lightgrey" alt="supported agents">
 </p>
@@ -107,6 +107,21 @@ The argument is always the agent whose checkpoint you are resuming:
 `codex` · `claude-code` · `opencode` · `deepseek-harness` · `muse`
 (aliases: `claude`, `open-code`, `dsh`, `deepseek`). With no argument,
 `/continue` resumes from the latest checkpoint, whoever wrote it.
+
+### Latest mode
+
+```
+/continue codex latest
+```
+
+Don't remember which project you left that agent in? Add `latest` and the
+agent resolves it for you: on the same machine it reads the global index
+at `~/.nextshift/index.jsonl` — one line per checkpoint, appended
+automatically by the checkpoint scripts — and picks that agent's most
+recent entry. Across machines (e.g. Muse from a phone) it scans the
+owner's GitHub repos by latest push and matches the `HANDOFF.md` author.
+Either way, the agent announces the project and checkpoint commit it
+resolved before it starts working, so a wrong guess is easy to catch.
 
 ## The `.agent/` folder
 

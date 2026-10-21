@@ -18,6 +18,13 @@ Format argumen: `<agent-sebelumnya> [repo-atau-path] [target-sesi]`
 - `[repo-atau-path]` hanya relevan bila kamu berjalan di mesin lain dari
   pekerjaan itu (mis. Muse dari HP): itu nama/URL repo GitHub tempat
   checkpoint terakhir di-push.
+- **Mode `latest`:** bila token kedua adalah `latest` (mis.
+  `/continue codex latest`), atau argumen hanya `latest`, project-nya
+  BUKAN direktori saat ini — project adalah pekerjaan TERAKHIR dari
+  `<agent-sebelumnya>` (atau dari agent mana pun bila agent tidak disebut),
+  yang ditemukan lewat Langkah 1b. Mode ini yang dipakai saat pengguna
+  ingin agent langsung paham "produk terakhir yang dikerjakan" tanpa
+  menyebut nama project/repo.
 
 ## Langkah 0 — Kenali dirimu
 
@@ -44,6 +51,29 @@ di akhir sesi.
    commit + push, lalu lanjut ke langkah 2. Ingat: folder `.agent/`
    akan ter-commit — jangan pernah mengisinya dengan rahasia (API key,
    token, password, isi `.env`).
+
+## Langkah 1b — Mode latest: temukan pekerjaan terakhir
+
+Hanya berlaku bila mode `latest` aktif:
+
+1. **Di mesin yang sama dengan pekerjaan itu:** baca index global
+   `~/.nextshift/index.jsonl` (satu baris JSON per checkpoint, ditulis
+   otomatis oleh script checkpoint dan boleh ditambah manual oleh agent).
+   Ambil baris TERAKHIR yang kolom `agent`-nya cocok dengan
+   `<agent-sebelumnya>` (abaikan huruf besar/kecil dan alias). Baris itu
+   berisi `project` (path lokal), `repo` (URL git), `branch`, `commit`,
+   dan `ts` (waktu checkpoint).
+2. **Bila index tidak ada / tidak ada baris yang cocok:** pindai repo
+   GitHub pemilik (urutkan dari push terbaru), cari repo yang memiliki
+   `.agent/HANDOFF.md`, dan cocokkan kolom "Terakhir dikerjakan oleh"
+   di HANDOFF dengan `<agent-sebelumnya>`. Ambil yang push-nya paling
+   baru. Ini juga jalur untuk agent di mesin lain (mis. Muse).
+3. Masuk ke project hasil resolusi itu (`cd` ke path lokal, atau
+   clone/pull repo-nya), lalu umumkan ke pengguna dalam SATU baris
+   project + commit checkpoint yang kamu ambil, sebelum mulai bekerja —
+   supaya resolusi "latest"-nya transparan dan bisa dikoreksi.
+4. Bila tidak ditemukan sama sekali: katakan apa adanya bahwa belum ada
+   checkpoint dari agent itu, dan tanyakan nama project/repo-nya.
 
 ## Langkah 2 — Baca, lalu verifikasi (jangan percaya buta)
 
