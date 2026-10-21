@@ -18,9 +18,11 @@ hanya terlihat oleh Muse lewat GitHub. Skill ini adalah jembatan itu.
 - `[repo]`: nama repo di bawah akun GitHub pengguna (neartana) atau URL clone.
   Kalau tidak disebut, tanyakan SATU kali repo mana — jangan menebak.
 - **Mode `latest`** (`/continue codex latest`, atau `/continue latest`):
-  repo tidak disebut karena memang harus dicari. Index lokal
-  `~/.nextshift/index.jsonl` ada di komputer pengguna, BUKAN di VM ini,
-  jadi jalur Muse adalah GitHub: ambil daftar repo pengguna urut dari
+  repo tidak disebut karena memang harus dicari. Mode ini pada dasarnya
+  LOKAL (index `~/.nextshift/index.jsonl` + scan folder project di
+  komputer pengguna) — tapi itu wilayah agent lokal di komputernya.
+  Muse adalah pengecualian remote yang sah: Muse tidak punya akses
+  filesystem komputer pengguna, jadi jalur Muse adalah GitHub: ambil daftar repo pengguna urut dari
   push terbaru (`gh repo list neartana --json name,pushedAt`), lalu untuk
   kandidat teratas periksa `.agent/HANDOFF.md`-nya (raw / gh api contents)
   dan cocokkan kolom "Terakhir dikerjakan oleh" dengan agent yang diminta.

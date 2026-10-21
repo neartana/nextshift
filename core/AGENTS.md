@@ -71,6 +71,10 @@ File ini append-only — jangan edit entri lama.
 - Sering-sering commit WIP, lalu `push`. Checkpoint yang belum ter-push
   TIDAK ADA bagi agent di mesin lain (mis. Muse yang diakses dari HP).
 - Pesan commit checkpoint: `wip: handoff checkpoint <ringkasan singkat>`
+- Mode `latest` bersifat LOKAL: resolusinya dari index
+  `~/.nextshift/index.jsonl`, lalu pemindaian folder project lokal.
+  Agent yang berjalan di mesin ini TIDAK BOLEH fallback memindai GitHub
+  untuk mode latest (GitHub hanya untuk agent remote / lintas-mesin).
 - Setiap checkpoint juga dicatat ke index global `~/.nextshift/index.jsonl`
   (script checkpoint melakukannya otomatis). Index ini yang dipakai perintah
   `/continue <agent> latest` untuk menemukan project terakhir dari agent itu.

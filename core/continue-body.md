@@ -21,6 +21,14 @@ Format argumen: `<agent-sebelumnya> [repo-atau-path] [target-sesi]`
   ingin agent langsung paham "produk terakhir yang dikerjakan" tanpa
   menyebut nama project/repo.
 
+**Prinsip dasar — local by default:** semua pekerjaan `/continue`
+berlangsung di mesin tempat kamu berjalan dan terhadap file lokal.
+GitHub hanya jembatan antar-mesin: gunakan hanya bila repo disebut
+eksplisit sebagai argumen, atau kamu agent remote tanpa akses ke
+filesystem mesin pemilik. Jangan pernah menjadikan GitHub jalur
+pencarian/fallback diam-diam untuk perintah yang bisa diselesaikan
+secara lokal.
+
 ## Langkah 0 — Kenali dirimu
 
 Catat nama harness-mu sendiri (codex / claude-code / opencode /
@@ -51,24 +59,42 @@ di akhir sesi.
 
 Hanya berlaku bila mode `latest` aktif:
 
-1. **Di mesin yang sama dengan pekerjaan itu:** baca index global
-   `~/.nextshift/index.jsonl` (satu baris JSON per checkpoint, ditulis
-   otomatis oleh script checkpoint dan boleh ditambah manual oleh agent).
-   Ambil baris TERAKHIR yang kolom `agent`-nya cocok dengan
-   `<agent-sebelumnya>` (abaikan huruf besar/kecil dan alias). Baris itu
-   berisi `project` (path lokal), `repo` (URL git), `branch`, `commit`,
-   dan `ts` (waktu checkpoint).
-2. **Bila index tidak ada / tidak ada baris yang cocok:** pindai repo
-   GitHub pemilik (urutkan dari push terbaru), cari repo yang memiliki
-   `.agent/HANDOFF.md`, dan cocokkan kolom "Terakhir dikerjakan oleh"
-   di HANDOFF dengan `<agent-sebelumnya>`. Ambil yang push-nya paling
-   baru. Ini juga jalur untuk agent di mesin lain (mis. Muse).
-3. Masuk ke project hasil resolusi itu (`cd` ke path lokal, atau
-   clone/pull repo-nya), lalu umumkan ke pengguna dalam SATU baris
-   project + commit checkpoint yang kamu ambil, sebelum mulai bekerja —
-   supaya resolusi "latest"-nya transparan dan bisa dikoreksi.
-4. Bila tidak ditemukan sama sekali: katakan apa adanya bahwa belum ada
-   checkpoint dari agent itu, dan tanyakan nama project/repo-nya.
+1. **PRINSIP: mode latest bersifat LOKAL.** Perintah ini berjalan di
+   mesin pemilik dan pekerjaan yang dicari juga ada di mesin itu.
+   JANGAN memindai GitHub, jangan memanggil API GitHub, dan jangan
+   meng-clone apa pun untuk menyelesaikan mode latest — kecuali kamu
+   agent remote yang memang TIDAK punya akses filesystem mesin pemilik
+   (mis. Muse), ATAU pengguna secara eksplisit meminta pencarian
+   lintas-mesin. Agent lokal yang lari ke GitHub itu SALAH.
+
+2. **Baca index global:** `~/.nextshift/index.jsonl` (satu baris JSON
+   per checkpoint, ditulis otomatis oleh script checkpoint dan boleh
+   ditambah manual oleh agent). Ambil baris TERAKHIR yang kolom
+   `agent`-nya cocok dengan `<agent-sebelumnya>` (abaikan huruf
+   besar/kecil dan alias). Baris itu berisi `project` (path lokal),
+   `repo` (URL git), `branch`, `commit`, dan `ts` (waktu checkpoint).
+
+3. **Bila index tidak ada / tidak ada baris yang cocok — pindai folder
+   LOKAL:** cari `.agent/HANDOFF.md` di root pencarian berikut, sedalam
+   maks. 3 level: direktori saat ini dan induknya, direktori home
+   pengguna, dan folder umum project (`~/Documents`, `~/projects`,
+   `~/dev`, `~/code`, `~/workspace`, `~/repos`, `~/source` — yang ada
+   saja). Untuk setiap HANDOFF yang ditemukan, cocokkan kolom
+   "Terakhir dikerjakan oleh" dengan `<agent-sebelumnya>`; ambil yang
+   file HANDOFF-nya paling baru diubah. Setiap project yang ditemukan
+   dengan cara ini WAJIB dicatat (backfill) ke
+   `~/.nextshift/index.jsonl` (path, remote git bila ada, branch,
+   commit terakhir dari `git log -1`, agent dari HANDOFF) supaya
+   resolusi berikutnya instan.
+
+4. Masuk ke project hasil resolusi itu (`cd` ke path lokalnya), lalu
+   umumkan ke pengguna dalam SATU baris project + commit checkpoint
+   yang kamu ambil, sebelum mulai bekerja — supaya resolusi
+   "latest"-nya transparan dan bisa dikoreksi.
+
+5. Bila tetap tidak ditemukan secara lokal: BERHENTI, katakan apa
+   adanya bahwa belum ada checkpoint lokal dari agent itu, dan tanyakan
+   path project-nya. Jangan mengarang, dan jangan lari ke GitHub.
 
 ## Langkah 2 — Baca, lalu verifikasi (jangan percaya buta)
 
