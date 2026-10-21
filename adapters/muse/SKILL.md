@@ -27,7 +27,8 @@ hanya terlihat oleh Muse lewat GitHub. Skill ini adalah jembatan itu.
 2. **Kalau `.agent/` tidak ada di repo:** pekerjaan itu belum pernah
    di-checkpoint oleh agent sebelumnya. Sampaikan itu apa adanya ke
    pengguna — yang bisa dilanjutkan hanyalah kondisi kode + riwayat commit
-   terakhir. Dengan izin pengguna, bootstrap `.agent/` dari template
+   terakhir. Perintah `/continue` dari pengguna adalah izin untuk
+   bootstrap: tanam `.agent/` dari template
    plugin nextshift (`core/` di paket plugin), isi CONTEXT.md dari
    codebase, HANDOFF.md dari status git, commit + push.
 3. **Baca berurutan:** `.agent/HANDOFF.md`, `PLAN.md`, `DECISIONS.md`,

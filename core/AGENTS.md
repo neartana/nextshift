@@ -7,6 +7,12 @@ tanpa membatalkan keputusan yang sudah diambil.
 
 ## WAJIB di awal setiap sesi
 
+Kalau folder `.agent/` belum ada dan kamu dipanggil lewat `/continue`:
+bootstrap folder itu dari template nextshift sebelum hal lain. Pemanggilan
+`/continue` adalah izin pemilik project untuk menanamnya — jangan di-skip
+dan jangan menunggu izin terpisah. Folder ini akan ter-commit, jadi jangan
+pernah mengisinya dengan rahasia (API key, token, password, isi `.env`).
+
 Sebelum menulis kode apa pun, baca berurutan:
 
 1. `.agent/HANDOFF.md`   — pekerjaan berhenti persis di mana, langkah berikutnya apa

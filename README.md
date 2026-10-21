@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
-  <img src="https://img.shields.io/badge/version-1.0.0-blue" alt="version 1.0.0">
+  <img src="https://img.shields.io/badge/version-1.0.1-blue" alt="version 1.0.1">
   <img src="https://img.shields.io/badge/command-%2Fcontinue-7C3AED" alt="command /continue">
   <img src="https://img.shields.io/badge/agents-codex%20%C2%B7%20claude--code%20%C2%B7%20opencode%20%C2%B7%20deepseek%20%C2%B7%20muse-lightgrey" alt="supported agents">
 </p>
@@ -53,6 +53,11 @@ Agent B:  /continue <agent-a>
 There is no server, no account pairing, and no live sync. The shared state is
 plain Markdown files in your repo, carried by git. That is the whole trick —
 and why it works with any agent that can read files.
+
+> **Bootstrapping is pre-authorized.** Invoking `/continue` in a project
+> that has no `.agent/` folder yet *is* the owner's consent to seed it —
+> agents must not skip seeding or wait for separate permission (unless the
+> user explicitly asked for read-only/report-only mode).
 
 ## Quick start
 

@@ -1,6 +1,6 @@
 {
   "name": "nextshift",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Continue another AI agent's work (codex, claude-code, opencode, deepseek-harness, muse) from the shared .agent/ handoff checkpoint in this project.",
   "author": {
     "name": "neartana"

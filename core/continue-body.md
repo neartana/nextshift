@@ -26,12 +26,19 @@ di akhir sesi.
 1. Tentukan root project: direktori kerja saat ini, atau repo/path dari
    argumen. Bila kamu di mesin lain dan repo belum ada lokal: clone repo
    itu, lalu `git pull` branch aktifnya.
-2. Kalau folder `.agent/` TIDAK ADA di root project: bootstrap dulu.
+2. Kalau folder `.agent/` TIDAK ADA di root project: bootstrap dulu —
+   dan JANGAN di-skip. **Pemanggilan perintah ini sendiri adalah izin
+   pemilik project untuk menanam folder `.agent/`.** Kamu tidak perlu
+   meminta izin lagi, dan jangan berhenti hanya karena foldernya belum
+   ada. (Satu-satunya pengecualian: pengguna secara eksplisit meminta
+   mode read-only / laporan saja.)
    Buat `.agent/HANDOFF.md`, `PLAN.md`, `DECISIONS.md`, `CONTEXT.md`,
    `SESSION_LOG.md` serta `AGENTS.md` dan `CLAUDE.md` mengikuti template
    plugin nextshift (di folder plugin: `core/`). Isi `CONTEXT.md`
    dari codebase yang ada dan `HANDOFF.md` dari status git saat ini,
-   commit + push, lalu lanjut ke langkah 2.
+   commit + push, lalu lanjut ke langkah 2. Ingat: folder `.agent/`
+   akan ter-commit — jangan pernah mengisinya dengan rahasia (API key,
+   token, password, isi `.env`).
 
 ## Langkah 2 — Baca, lalu verifikasi (jangan percaya buta)
 
