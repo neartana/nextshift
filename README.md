@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
-  <img src="https://img.shields.io/badge/version-1.2.0-blue" alt="version 1.2.0">
+  <img src="https://img.shields.io/badge/version-1.2.1-blue" alt="version 1.2.1">
   <img src="https://img.shields.io/badge/command-%2Fcontinue-7C3AED" alt="command /continue">
   <img src="https://img.shields.io/badge/agents-codex%20%C2%B7%20claude--code%20%C2%B7%20opencode%20%C2%B7%20deepseek%20%C2%B7%20muse-lightgrey" alt="supported agents">
 </p>

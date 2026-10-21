@@ -5,7 +5,7 @@
 // Global installs copy the /continue command (or its skill equivalent) into
 // each harness's own config dir. --init seeds a project with the .agent/
 // handoff template + project-level commands and NEVER overwrites files.
-import { cpSync, existsSync, mkdirSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -83,6 +83,19 @@ if (doInit) {
   put(A("claude-code/commands/continue.md"), join(initDir, ".claude/commands/continue.md"), noOver);
   put(A("opencode/commands/continue.md"), join(initDir, ".opencode/commands/continue.md"), noOver);
   put(A("codex/skills/continue"), join(initDir, ".agents/skills/continue"), noOver);
+  // Register this project in ~/.nextshift/config.json roots, so the
+  // latest-resolver scans THIS machine's real geography — no hardcoded
+  // paths from anyone else's computer.
+  const cfgPath = join(home, ".nextshift", "config.json");
+  let cfg = {};
+  try { cfg = JSON.parse(readFileSync(cfgPath, "utf8")); } catch { /* fresh config */ }
+  cfg.roots = Array.isArray(cfg.roots) ? cfg.roots : [];
+  if (!cfg.roots.includes(initDir)) {
+    cfg.roots.push(initDir);
+    mkdirSync(dirname(cfgPath), { recursive: true });
+    writeFileSync(cfgPath, JSON.stringify(cfg, null, 2) + "\n");
+    console.log(`  -> registered in ~/.nextshift/config.json roots`);
+  }
 }
 
 // Helper bersama semua agent: resolver bukti untuk mode latest.

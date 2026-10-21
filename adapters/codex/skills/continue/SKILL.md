@@ -90,7 +90,13 @@ Hanya berlaku bila mode `latest` aktif:
    petunjuk, BUKAN satu-satunya sumber kebenaran:**
    a. **Riwayat sesi asli harness itu sendiri** (bila lokasinya
       terverifikasi). Yang terverifikasi saat ini: DeepSeek Harness
-      menyimpan sesi di `~/.dsh/sessions`; file
+      menyimpan sesi di `~/.dsh/sessions` (lokasi default relatif
+      terhadap home pengguna — BUKAN path absolut milik siapa pun;
+      dapat diganti lewat `~/.nextshift/config.json` atau env
+      `NEXTSHIFT_DSH_SESSIONS`, dan folder scan project juga diatur
+      di config yang sama / env `NEXTSHIFT_ROOTS`. Jangan pernah
+      menanam path absolut satu komputer tertentu ke dalam protokol
+      atau kode); file
       `session.v4.jsonl.zstd` dapat berisi BEBERAPA frame Zstandard
       yang digabung — baca SELURUH frame, bukan frame pertama saja.
       Parser yang belum mendukung format itu harus melaporkan

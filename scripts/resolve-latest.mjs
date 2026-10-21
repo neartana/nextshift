@@ -61,6 +61,24 @@ const wantedAgent = parseRequestedAgent(tokens);
 const HOME = os.homedir();
 const notes = [];
 const candidates = [];
+const extraRoots = new Set(); // roots learned from evidence (index/session parents)
+
+// Machine-specific locations are CONFIGURATION, never baked-in absolutes.
+// Precedence: env override > ~/.nextshift/config.json > home-relative default.
+//   config.json: { "roots": ["<dir>", ...],
+//                  "sessions": { "deepseek-harness": "<dir>" } }
+//   env: NEXTSHIFT_ROOTS (path-delimiter separated), NEXTSHIFT_DSH_SESSIONS
+function loadConfig() {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(HOME, ".nextshift", "config.json"), "utf8"));
+  } catch { return {}; }
+}
+const CONFIG = loadConfig();
+function dshSessionsDir() {
+  return process.env.NEXTSHIFT_DSH_SESSIONS
+    || (CONFIG.sessions && CONFIG.sessions["deepseek-harness"])
+    || path.join(HOME, ".dsh", "sessions");
+}
 
 function toTime(v) {
   if (v == null) return null;
@@ -84,6 +102,7 @@ function fromIndex() {
     let e;
     try { e = JSON.parse(line); } catch { continue; }
     if (wantedAgent && normalizeAgentName(e.agent) !== wantedAgent) continue;
+    if (e.project) extraRoots.add(path.dirname(e.project)); // learn geography from evidence
     candidates.push({
       source: "index",
       agent: normalizeAgentName(e.agent),
@@ -102,11 +121,26 @@ function handoffField(text, label) {
   const m = text.match(new RegExp(`^-\\s*${label}:\\s*(.+)$`, "mi"));
   return m ? m[1].trim() : null;
 }
+// HANDOFF fields are free text ("2026-10-21 21:00 — did X"): extract the
+// leading date+time instead of Date.parse-ing the whole sentence.
+function timeFromField(text, label) {
+  const v = handoffField(text, label);
+  if (!v) return null;
+  const m = v.match(/(\d{4}-\d{2}-\d{2})[ T](\d{2}:\d{2})/);
+  if (m) return toTime(`${m[1]}T${m[2]}`);
+  const d = v.match(/(\d{4}-\d{2}-\d{2})/);
+  return d ? toTime(d[1]) : null;
+}
 function scanAgentDirs() {
   const roots = new Set([process.cwd(), path.dirname(process.cwd()), HOME]);
   for (const d of ["Documents", "projects", "dev", "code", "workspace", "repos", "source"]) {
     roots.add(path.join(HOME, d));
   }
+  for (const r of CONFIG.roots || []) roots.add(r);
+  if (process.env.NEXTSHIFT_ROOTS) {
+    for (const r of process.env.NEXTSHIFT_ROOTS.split(path.delimiter)) if (r) roots.add(r);
+  }
+  for (const r of extraRoots) roots.add(r);
   const found = new Map();
   const walk = (dir, depth) => {
     if (depth > 3) return;
@@ -125,8 +159,8 @@ function scanAgentDirs() {
     try { text = fs.readFileSync(hf, "utf8"); } catch { continue; }
     const agent = normalizeAgentName(handoffField(text, "Terakhir dikerjakan oleh") || "");
     if (wantedAgent && agent !== wantedAgent) continue;
-    let activity = toTime(handoffField(text, "Aktivitas substantif terakhir"))
-      || toTime(handoffField(text, "Tanggal-jam"));
+    let activity = timeFromField(text, "Aktivitas substantif terakhir")
+      || timeFromField(text, "Tanggal-jam");
     if (!activity) {
       try {
         const iso = execFileSync("git", ["-C", dir, "log", "-1", "--format=%cI"], { encoding: "utf8" }).trim();
@@ -208,9 +242,9 @@ function decompressAll(file) {
 }
 function fromDshSessions() {
   if (wantedAgent && wantedAgent !== "deepseek-harness") return;
-  const dir = path.join(HOME, ".dsh", "sessions");
+  const dir = dshSessionsDir();
   if (!fs.existsSync(dir)) {
-    notes.push("dsh sessions: none found at ~/.dsh/sessions");
+    notes.push(`dsh sessions: none found at ${dir} (override via NEXTSHIFT_DSH_SESSIONS or ~/.nextshift/config.json)`);
     return;
   }
   const files = [];
@@ -249,6 +283,7 @@ function fromDshSessions() {
       if (kind.includes("error") && text) blocker = text;
     }
     if (!lastUserTs) continue;
+    if (workspace) extraRoots.add(path.dirname(workspace)); // learn geography from evidence
     candidates.push({
       source: "dsh-session",
       agent: "deepseek-harness",
@@ -265,8 +300,8 @@ function fromDshSessions() {
 }
 
 fromIndex();
+fromDshSessions(); // before the scan, so session workspaces seed extraRoots
 scanAgentDirs();
-fromDshSessions();
 
 // ---------- ranking: substantive activity wins; source breaks near-ties ----------
 const SOURCE_RANK = { "dsh-session": 3, handoff: 2, index: 1 };
